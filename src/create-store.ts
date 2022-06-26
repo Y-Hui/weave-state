@@ -1,17 +1,15 @@
 import {
-  EqualityFn,
+  InitialValue,
   Listener,
   ListenerKey,
   RemoveListenerFn,
-  SetStateAction,
+  SetStateFn,
 } from './types/index'
+import getInitialValue from './utils/get-initial-value'
+import setStateAction from './utils/set-state-action'
+import withUse, { Use } from './utils/with-use'
 
-type SetStateFn<S> = (
-  action: SetStateAction<S>,
-  equalityFn?: EqualityFn,
-) => void
-
-export interface Store<S> {
+export interface WeaveState<S> {
   /**
    * 获取 State
    */
@@ -20,8 +18,6 @@ export interface Store<S> {
    * 修改 State
    *
    * 若新旧值相等，则跳过触发 listener
-   *
-   * @param equalityFn 比较新值旧值是否相等的函数，默认使用 `Object.is` 比较。
    */
   readonly setState: SetStateFn<S>
   /**
@@ -47,26 +43,20 @@ export interface Store<S> {
   readonly notify: () => void
 }
 
-export type GetState<T> = T extends Store<infer U> ? U : T
+export type GetState<T> = T extends WeaveState<infer U> ? U : unknown
 
-export interface StoreMethods<S> extends Store<S> {
-  /**
-   * 使用自定义函数代理 store api
-   */
-  readonly extend: <T>(middleware: (store: Store<S>) => T) => T
-}
-
-function setStateAction<S>(action: SetStateAction<S>, prevState: S): S {
-  if (typeof action === 'function') {
-    return (action as (prevState: S) => S)(prevState)
-  }
-  return action
-}
-
-function createStore<S>(initialState: S): StoreMethods<S> {
+/**
+ * @param initialState 初始值
+ * @param equalityFn 比较新值旧值是否相等的函数，默认使用 `Object.is` 比较。
+ */
+function createStore<S>(
+  initialState: InitialValue<S>,
+  equalityFn = Object.is,
+): Use<WeaveState<S>> {
+  const initial = getInitialValue(initialState)
   const state = {
-    entity: initialState,
-    prevEntity: initialState,
+    entity: initial,
+    prevEntity: initial,
     get value() {
       return this.entity
     },
@@ -91,7 +81,7 @@ function createStore<S>(initialState: S): StoreMethods<S> {
     listeners.forEach(dispatch)
   }
 
-  const setState: SetStateFn<S> = (action, equalityFn = Object.is) => {
+  const setState: SetStateFn<S> = (action) => {
     state.prevEntity = getState()
     const prevState = state.prevEntity
     const nextState = setStateAction(action, prevState)
@@ -124,28 +114,14 @@ function createStore<S>(initialState: S): StoreMethods<S> {
     listeners.clear()
   }
 
-  const stateMethods: Store<S> = Object.freeze({
+  return withUse({
     getState,
     setState,
     addListener,
     removeListener,
     clearAllListener,
     notify,
-  } as const)
-
-  const extend = <T>(middleware: (store: Store<S>) => T) => {
-    return middleware(stateMethods)
-  }
-
-  return {
-    getState,
-    setState,
-    addListener,
-    removeListener,
-    clearAllListener,
-    extend,
-    notify,
-  } as const
+  })
 }
 
 export default createStore

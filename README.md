@@ -1,6 +1,11 @@
 ## weave-state
 
-状态机。
+将状态放置在组件之外，自由编织它们。
+
+`weave-state` 虽然有 React Hook 预设，但是它本身并不依赖某个特定的前端框架/库。
+
+> 此状态库受到 [Jotai](https://github.com/pmndrs/jotai)、[zustand](https://github.com/pmndrs/zustand) 的启发，感谢这些优秀的开源项目。
+>
 
 ### 基本用法
 
@@ -25,10 +30,10 @@ store.setState((prevState) => ({ ...prevState, name: 'Helen' }))
 
 ```ts
 import create from 'weave-state'
-import { selector } from 'weave-state/middleware'
+import { selector } from 'weave-state/extend'
 
 const store = create({ name: 'Andrew', age: 14 })
-const scopeStore = store.extend(selector()) // 使用 selector 增强
+const scopeStore = store.use(selector()) // 使用 selector 增强
 
 scopeStore
   .selector((state) => state.age)
@@ -92,6 +97,20 @@ store.clearAllListener() // 清空所有 listener
 
 ### API 签名及解释
 
+#### 参数
+
+```ts
+import create from 'weave-state'
+
+// 初始化默认值
+create(0)
+create(() => 0) // 支持使用函数创建
+
+// 参数 2 接收一个函数，用于在 setState 时比较新值与旧值是否相等，
+// 若两值相等，则跳过触发 `listener`。
+create(0, Object.is)
+```
+
 ####  `getState`
  获取当前最新的状态值。
 
@@ -101,30 +120,19 @@ store.clearAllListener() // 清空所有 listener
 
   ```ts
    type SetStateAction<S> = S | ((prevState: S) => S)
-   type EqualityFn = (value1: unknown, value2: unknown) => boolean
-   
-   type SetStateFn<S> = (action: SetStateAction<S>, equalityFn?: EqualityFn) => void
+   type SetStateFn<S> = (action: SetStateAction<S>) => void
   ```
 
-  `setState` 接收两个参数：
+  `setState` 接收 1 个参数：
 
-  1. 参数 1
+  可以为新的值或者函数调用。
+```ts
+const store = create(false)
 
-     可以为新的值或者函数调用。
-
-     ```ts
-     const store = create(false)
-     
-     store.setState(true) // 新值
-     // 或者
-     store.setState((currentState) => !currentState) // 函数调用
-     ```
-
-  2. 参数 2
-
-     参数 2 接收一个函数，用于比较新值与旧值是否相等，若两值相等，则跳过触发 `listener`。
-
-     默认使用 `Object.is` 进行比较。
+store.setState(true) // 新值
+// 或者
+store.setState((currentState) => !currentState) // 函数调用
+```
 
 #### `addListener`
 
@@ -170,7 +178,7 @@ function addListener: (listener: Listener<S>, key?: ListenerKey ) => RemoveListe
 
 手动触发所有 listener。
 
-#### `extends`
+#### `use`
 
 该函数是用于扩展原始 api 所存在的。
 
@@ -181,7 +189,7 @@ function addListener: (listener: Listener<S>, key?: ListenerKey ) => RemoveListe
 ```ts
 import create from 'weave-state'
 
-const store = create(2).extend((api) => {
+const store = create(2).use((api) => {
   return {
     ...api, // 将原始 api 合并
     getDoubleValue() { // 新增一个获取 2 倍数值的函数
@@ -194,7 +202,76 @@ console.log(store.getState()) // 2
 console.log(store.getDoubleValue()) // 4
 ```
 
-`extend` 的返回值是没有任何约束的，你可以随心所欲创造任何功能。
+`use` 函数的返回值是没有任何约束的，你可以随心所欲创造任何功能。
+
+### 派生状态
+
+有时候，你需要依赖 state 并进行重新计算，那么这时候你可以考虑派生一个新的状态来实现：
+
+```ts
+import create from 'weave-state'
+import { derived } from 'weave-state/extend'
+
+const state = create({ value: 0, age: 0 })
+const age = derived(state, val => val.age)
+const doubleValue = derived(state, val => val.value * 2)
+
+age.addListener((val) => {
+  console.log('age changed', val)
+})
+```
+
+### 在 React 中使用
+
+我们创建了一些函数，方便在 React 中使用。
+
+#### useWeaveState
+
+用于在 React 中读取状态并更新的 hook，它的使用方法和 React.useState 一致。
+
+```tsx
+import create from 'weave-state'
+import { stateHook } from 'weave-state/extend'
+
+const store = create({ value: 0, age: 0 }).use(stateHook)
+
+// 以下代码需要写在 React Component 中
+const [state, setState] = state.useWeaveState()
+```
+
+#### useSelector
+
+借助 selector 我们可以侦听指定的 state。
+
+```tsx
+import create from 'weave-state'
+import { selector, selectorHook } from 'weave-state/extend'
+
+const store = create({ value: 0, age: 0 }).use(selector).use(selectorHook)
+
+// 以下代码需要写在 React Component 中
+const value = state.useSelector(val => val.value)
+const doubleValue = state.useSelector(val => val.value * 2)
+```
+
+#### useValue
+
+仅读取 state，而不需要 update 函数。
+
+```tsx
+import create from 'weave-state'
+import { derived, valueHook } from 'weave-state/extend'
+
+const store = create({ value: 0, age: 0 }).use(valueHook)
+
+// 以下代码需要写在 React Component 中
+const state = state.useValue()
+
+// 结合 derived 一起使用
+const derivedState = derived(store, val => val.age).use(valueHook)
+const age = derivedState.useValue()
+```
+
 
 ### TODO
 
