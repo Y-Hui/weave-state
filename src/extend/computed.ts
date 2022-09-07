@@ -28,13 +28,15 @@ export interface WritableValue<R> {
 
 export interface ComputedValue<R> {
   addListener(listener: (state: R, prevState: R) => void): void
+  getState(): R
+}
+
+export type ComputedWritableValue<R> = ComputedValue<R> & {
   setState(nextState: R): void
 }
 
-function computed<R>(
-  action: ReadonlyValue<R>,
-): Omit<ComputedValue<R>, 'setState'>
-function computed<R>(action: WritableValue<R>): ComputedValue<R>
+function computed<R>(action: ReadonlyValue<R>): ComputedValue<R>
+function computed<R>(action: WritableValue<R>): ComputedWritableValue<R>
 function computed<R>(action: ReadonlyValue<R> | WritableValue<R>) {
   const listeners = new Set<Listener<R>>()
   const deps = new Set<WeaveStatePart<unknown>>()
@@ -86,13 +88,18 @@ function computed<R>(action: ReadonlyValue<R> | WritableValue<R>) {
     }
   }
 
+  const getState = () => {
+    return cacheState.current as R
+  }
+
   if (typeof action === 'function') {
-    return { addListener }
+    return { addListener, getState }
   }
 
   return {
     addListener,
     setState,
+    getState,
   }
 }
 
