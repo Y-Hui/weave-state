@@ -1,11 +1,24 @@
 import type { WeaveState } from '../create-store'
-import { ListenerKey } from '../types/index'
+import { ListenerKey, RemoveListenerFn } from '../types/index'
 
 type WeaveStatePart<T> = Pick<
   WeaveState<T>,
   'addListener' | 'setState' | 'getState'
 >
 type GetState<T> = T extends WeaveStatePart<infer U> ? U : unknown
+
+interface ListenerRest<S, FullState> {
+  prevValue: S
+  state: FullState
+  prevState: FullState
+}
+
+interface SelectorOptions<S, FullState> {
+  readonly addListener: (
+    listener: (state: S, rest: ListenerRest<S, FullState>) => void,
+    key?: ListenerKey,
+  ) => RemoveListenerFn
+}
 
 export type WithSelector<S> = {
   /**
@@ -16,7 +29,7 @@ export type WithSelector<S> = {
   selector: <T>(
     selectorState: (state: S) => T,
     firstCall?: boolean,
-  ) => Pick<WeaveState<S>, 'addListener'>
+  ) => SelectorOptions<T, S>
 }
 
 /**
@@ -38,13 +51,21 @@ function selector(equalityFn = Object.is) {
             const cache = store.getState()
             let currentState = selectorState(cache)
             if (firstCall) {
-              listener(cache, cache)
+              listener(currentState, {
+                prevValue: currentState,
+                prevState: cache,
+                state: cache,
+              })
             }
             return originListen((state, prevState) => {
               const nextState = selectorState(state)
               if (!equalityFn(currentState, nextState)) {
                 currentState = nextState
-                listener(state, prevState)
+                listener(nextState, {
+                  prevValue: selectorState(prevState),
+                  prevState,
+                  state,
+                })
               }
             }, key)
           },

@@ -8,7 +8,7 @@ type GetState<T> = T extends WeaveStatePart<infer U> ? U : unknown
 /**
  * 添加 useValue Hook，用于获取最新的状态
  *
- * ``ts
+ * ```ts
  * import create from 'weave-state'
  * import { valueHook } from 'weave-state/extend'
  *

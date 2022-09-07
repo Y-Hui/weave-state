@@ -10,5 +10,5 @@ export type {
   SetStateAction,
   SetStateFn,
 } from './types/index'
-export { default as createMixin } from './utils/with-use'
 export { default as setStateAction } from './utils/set-state-action'
+export { default as withUse } from './utils/with-use'

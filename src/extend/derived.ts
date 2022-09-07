@@ -60,7 +60,7 @@ function derived<S extends WeaveStatePart<any>, R>(
   } = create(selectorFn(store.getState()))
 
   storeWithSelector.selector(selectorFn).addListener((value) => {
-    setState(selectorFn(value))
+    setState(value)
   })
 
   return withUse({

@@ -15,11 +15,11 @@ type WeaveStatePart<T> = Pick<WithSelector<T>, 'selector'> &
  * import create from 'weave-state'
  * import { selector } from 'weave-state/extend'
  *
- * const state = create({ value: 0, age: 0 }).use(selector())
+ * const state = create({ value: 0, age: 0 }).use(selector()).use(selectorHook)
  *
  *
  * // use in React Component
- * const ageValue = state.selectorHook((val) => val.age)
+ * const ageValue = state.useSelector((val) => val.age)
  * ```
  */
 function selectorHook<T extends WeaveStatePart<any>>(store: T) {
@@ -32,9 +32,11 @@ function selectorHook<T extends WeaveStatePart<any>>(store: T) {
       })
 
       useEffect(() => {
-        return store.selector(selectorFn.current).addListener((newVal) => {
-          setValue(selectorFn.current(newVal))
-        })
+        return store
+          .selector(selectorFn.current)
+          .addListener((nextState, { state }) => {
+            setValue(selectorFn.current(state))
+          })
       }, [])
 
       return value

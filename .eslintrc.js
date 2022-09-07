@@ -58,5 +58,7 @@ module.exports = {
       { devDependencies: ['**/*.test.ts', '**/*.test.tsx', 'vite.config.ts'] },
     ],
     'react/require-default-props': 0,
+    'no-redeclare': 0,
+    '@typescript-eslint/no-redeclare': 'warn',
   },
 }
