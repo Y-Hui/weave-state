@@ -1,4 +1,7 @@
-import type { GetState, WeaveState } from '../create-store'
+import type { WeaveState } from '../create-store'
+import type { Listener, RemoveListenerFn, SetStateFn } from '../types'
+import setStateAction from '../utils/set-state-action'
+import withUse, { Use } from '../utils/with-use'
 import type { WithSelector } from './selector'
 import withSelector from './with-selector'
 
@@ -7,53 +10,51 @@ type WeaveStateGetter<T> = Pick<
   'getState' | 'addListener' | 'setState'
 >
 type WeaveStateSelector<T> = WeaveStateGetter<T> & WithSelector<T>
-
 type WeaveStatePart<T> = WeaveStateGetter<T> | WeaveStateSelector<T>
+type GetState<T> = T extends WeaveStatePart<infer U> ? U : unknown
+type Setter<R> = (nextState: R) => void
 
-export type ReadFn = <S extends WeaveStatePart<any>, R = GetState<S>>(
+export type Read = <S extends WeaveStatePart<any>, R = GetState<S>>(
   store: S,
   selectorFn?: (state: GetState<S>) => R,
 ) => R
 
-export type ReadonlyValue<R> = (read: ReadFn) => R
-
-export type Setter<R> = (nextState: R) => void
-
-type Listener<S> = (state: S, prevState: S) => void
+export type ReadonlyValue<R> = (read: Read) => R
 
 export interface WritableValue<R> {
   get: ReadonlyValue<R>
   set: Setter<R>
 }
 
-export interface ComputedValue<R> {
-  addListener(listener: (state: R, prevState: R) => void): void
+export type ComputedValue<R> = {
+  addListener(listener: Listener<R>): () => void
+  clearAllListener: RemoveListenerFn
   getState(): R
 }
 
 export type ComputedWritableValue<R> = ComputedValue<R> & {
-  setState(nextState: R): void
+  setState: SetStateFn<R>
+  // setState(nextState: R): void
 }
 
-function computed<R>(action: ReadonlyValue<R>): ComputedValue<R>
-function computed<R>(action: WritableValue<R>): ComputedWritableValue<R>
+function computed<R>(action: ReadonlyValue<R>): Use<ComputedValue<R>>
+function computed<R>(action: WritableValue<R>): Use<ComputedWritableValue<R>>
 function computed<R>(action: ReadonlyValue<R> | WritableValue<R>) {
   const listeners = new Set<Listener<R>>()
   const deps = new Set<WeaveStatePart<unknown>>()
-  const updateState: { current?: Setter<R> } = {}
-  const cacheState: { current?: R } = {}
+  let updateState: Setter<R>
+  let cacheState: R
 
   const toggleListener = () => {
     const state = run()
-    if (Object.is(state, cacheState.current)) return
+    if (Object.is(state, cacheState)) return
     listeners.forEach((listener) => {
-      const prevState = cacheState.current as R
-      cacheState.current = state
+      const prevState = cacheState
+      cacheState = state
       listener(state, prevState)
     })
   }
-
-  const read: ReadFn = (store, selectorFn) => {
+  const read: Read = (store, selectorFn) => {
     if (selectorFn) {
       if (!deps.has(store)) {
         const selectorStore = withSelector(store)
@@ -73,34 +74,37 @@ function computed<R>(action: ReadonlyValue<R> | WritableValue<R>) {
       return action(read)
     }
     const { get, set } = action
-    updateState.current = set
+    updateState = set
     return get(read)
   }
-  cacheState.current = run()
+  cacheState = run()
 
-  const addListener = (listener: Listener<R>) => {
-    listeners.add(listener)
-  }
-
-  const setState = (nextState: R) => {
-    if (updateState.current) {
-      updateState.current(nextState)
+  const getState = () => cacheState
+  const setState: SetStateFn<R> = (stateAction) => {
+    if (updateState) {
+      updateState(setStateAction(stateAction, cacheState))
     }
   }
-
-  const getState = () => {
-    return cacheState.current as R
+  const addListener = (listener: Listener<R>) => {
+    listeners.add(listener)
+    return () => {
+      listeners.delete(listener)
+    }
+  }
+  const clearAllListener = () => {
+    listeners.clear()
   }
 
   if (typeof action === 'function') {
-    return { addListener, getState }
+    return withUse({ addListener, getState, clearAllListener })
   }
 
-  return {
+  return withUse({
     addListener,
     setState,
     getState,
-  }
+    clearAllListener,
+  })
 }
 
 export default computed
