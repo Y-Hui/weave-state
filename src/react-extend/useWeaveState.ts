@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 
-import type { WeaveState } from '../../create-store'
-import type { SetStateFn } from '../../types'
+import type { WeaveState } from '../create-store'
+import type { SetStateFn } from '../types'
 
 type WeaveStatePart<T> = Pick<
   WeaveState<T>,
@@ -31,11 +31,7 @@ function stateHook<T extends WeaveStatePart<any>>(store: T) {
     useWeaveState(): StateHook<State> {
       const [value, setValue] = useState<GetState<T>>(store.getState)
 
-      useEffect(() => {
-        return store.addListener((newVal) => {
-          setValue(newVal)
-        })
-      }, [])
+      useEffect(() => store.addListener(setValue), [])
 
       return [value, store.setState]
     },

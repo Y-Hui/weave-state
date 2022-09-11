@@ -1,9 +1,10 @@
 import type { FC } from 'react'
 
 import create from '../../../src'
-import { computed, stateHook, valueHook } from '../../../src/extend'
+import { computed } from '../../../src/extend'
+import { useValue, useWeaveState } from '../../../src/react-extend'
 
-const personAtom = create({ helen: { age: 1 } }).use(valueHook)
+const personAtom = create({ helen: { age: 1 } }).use(useValue)
 const helenAge = computed({
   get(read) {
     return read(personAtom, (atom) => atom.helen.age)
@@ -14,8 +15,8 @@ const helenAge = computed({
     })
   },
 })
-  .use(valueHook)
-  .use(stateHook)
+  .use(useValue)
+  .use(useWeaveState)
 
 const Basic: FC = () => {
   const [age, setAge] = helenAge.useWeaveState()

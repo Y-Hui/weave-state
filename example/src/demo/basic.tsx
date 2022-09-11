@@ -1,9 +1,9 @@
 import type { FC } from 'react'
 
 import create from '../../../src'
-import { stateHook } from '../../../src/extend'
+import { useWeaveState } from '../../../src/react-extend'
 
-const countAtom = create(0).use(stateHook)
+const countAtom = create(0).use(useWeaveState)
 
 const Updater: FC = () => {
   return (

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 
-import type { GetState, WeaveState } from '../../create-store'
-import type { WithSelector } from '../selector'
+import type { GetState, WeaveState } from '../create-store'
+import type { WithSelector } from '../extend/selector'
 
 type WeaveStatePart<T> = Pick<WithSelector<T>, 'selector'> &
   Pick<WeaveState<T>, 'getState'>
@@ -16,7 +16,6 @@ type WeaveStatePart<T> = Pick<WithSelector<T>, 'selector'> &
  * import { selector } from 'weave-state/extend'
  *
  * const state = create({ value: 0, age: 0 }).use(selector()).use(selectorHook)
- *
  *
  * // use in React Component
  * const ageValue = state.useSelector((val) => val.age)

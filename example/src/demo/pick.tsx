@@ -1,7 +1,8 @@
 import type { FC } from 'react'
 
 import create from '../../../src'
-import { selector, selectorHook } from '../../../src/extend'
+import { selector } from '../../../src/extend'
+import { useSelector } from '../../../src/react-extend'
 
 const nestedAtom = create({
   nested: {
@@ -13,7 +14,7 @@ const nestedAtom = create({
   },
 })
   .use(selector())
-  .use(selectorHook)
+  .use(useSelector)
 
 const Count: FC = () => {
   const count = nestedAtom.useSelector((atom) => atom.nested.count)

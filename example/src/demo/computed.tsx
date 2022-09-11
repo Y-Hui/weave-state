@@ -1,10 +1,11 @@
 import type { FC } from 'react'
 
 import create from '../../../src'
-import { computed, stateHook, valueHook } from '../../../src/extend'
+import { computed } from '../../../src/extend'
+import { useValue, useWeaveState } from '../../../src/react-extend'
 
-const countAtom = create(0).use(stateHook)
-const doubleCountAtom = computed((read) => read(countAtom) * 2).use(valueHook)
+const countAtom = create(0).use(useWeaveState)
+const doubleCountAtom = computed((read) => read(countAtom) * 2).use(useValue)
 
 const Basic: FC = () => {
   const [count, setCount] = countAtom.useWeaveState()

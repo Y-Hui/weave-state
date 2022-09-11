@@ -1,14 +1,15 @@
 import type { FC } from 'react'
 
 import create from '../../../src'
-import { computed, valueHook } from '../../../src/extend'
+import { computed } from '../../../src/extend'
+import { useValue } from '../../../src/react-extend'
 
-const nameAtom = create('Andrew').use(valueHook)
-const ageAtom = create(11).use(valueHook)
+const nameAtom = create('Andrew').use(useValue)
+const ageAtom = create(11).use(useValue)
 
 const composeAtom = computed((read) => {
   return `${read(nameAtom)} is ${read(ageAtom)} years old.`
-}).use(valueHook)
+}).use(useValue)
 
 const Basic: FC = () => {
   const info = composeAtom.useValue()

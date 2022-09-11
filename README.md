@@ -267,7 +267,7 @@ function addListener: (listener: Listener<S>, key?: ListenerKey ) => RemoveListe
 
 #### `use`
 
-该函数可用于扩展 state 对象的功能。
+该函数可用于扩展 state 对象的功能，将它当做“插件”理解就好。
 
 它接收一个函数，并将函数的返回值返回，作为新的 api 使用。
 
@@ -293,8 +293,34 @@ console.log(store.getDoubleValue()) // 4
 
 
 
+### selector
 
-### 在 React 中使用
+selector 能够帮助你在复杂状态指定值进行监听。
+
+```ts
+import create 'weave-state'
+import { selector } from 'weave-state/extend'
+
+// 通过 use 挂载
+const state = create({ name: 'Andrew', age: 14 }).use(selector())
+
+// 单独使用
+const withSelectot = selector()
+const state = withSelectot(create({ name: 'Andrew', age: 14 }))
+```
+
+
+
+selector 是一个函数，它有一个可选参数
+
+- equalityFn
+  用于在触发 listener 前进行比较新旧值是否相等，若两值相等，则不会触发 listener。
+  默认使用 `Object.is` 进行比较。
+
+
+
+
+### 为 React 提供的函数
 
 我们创建了一些 hook，方便在 React 中使用。
 
@@ -304,9 +330,9 @@ console.log(store.getDoubleValue()) // 4
 
 ```tsx
 import create from 'weave-state'
-import { stateHook } from 'weave-state/extend'
+import { useWeaveState } from 'weave-state/react-extend'
 
-const store = create({ value: 0, age: 0 }).use(stateHook)
+const store = create({ value: 0, age: 0 }).use(useWeaveState)
 
 // 以下代码需要写在 React Component 中
 const [state, setState] = state.useWeaveState()
@@ -318,9 +344,10 @@ const [state, setState] = state.useWeaveState()
 
 ```tsx
 import create from 'weave-state'
-import { selector, selectorHook } from 'weave-state/extend'
+import { selector } from 'weave-state/extend'
+import { useSelector } from 'weave-state/react-extend'
 
-const store = create({ value: 0, age: 0 }).use(selector()).use(selectorHook)
+const store = create({ value: 0, age: 0 }).use(selector()).use(useSelector)
 
 // 以下代码需要写在 React Component 中
 const value = state.useSelector(val => val.value)
@@ -333,9 +360,9 @@ const doubleValue = state.useSelector(val => val.value * 2)
 
 ```tsx
 import create from 'weave-state'
-import { derived, valueHook } from 'weave-state/extend'
+import { useValue } from 'weave-state/react-extend'
 
-const store = create({ value: 0, age: 0 }).use(valueHook)
+const store = create({ value: 0, age: 0 }).use(useValue)
 
 // 以下代码需要写在 React Component 中
 const state = state.useValue()
