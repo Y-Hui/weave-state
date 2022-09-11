@@ -34,7 +34,7 @@ function selectorHook<T extends WeaveStatePart<any>>(store: T) {
       useEffect(() => {
         return store
           .selector(selectorFn.current)
-          .addListener((nextState, { state }) => {
+          .addListener((_val, _prevVal, state) => {
             setValue(selectorFn.current(state))
           })
       }, [])

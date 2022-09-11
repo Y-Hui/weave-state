@@ -7,15 +7,14 @@ type WeaveStatePart<T> = Pick<
 >
 type GetState<T> = T extends WeaveStatePart<infer U> ? U : unknown
 
-interface ListenerRest<S, FullState> {
-  prevValue: S
-  state: FullState
-  prevState: FullState
-}
-
-interface SelectorOptions<S, FullState> {
+export interface SelectorOptions<S, FullState> {
   readonly addListener: (
-    listener: (state: S, rest: ListenerRest<S, FullState>) => void,
+    listener: (
+      value: S,
+      prevValue: S,
+      state: FullState,
+      prevState: FullState,
+    ) => void,
     key?: ListenerKey,
   ) => RemoveListenerFn
 }
@@ -49,23 +48,15 @@ function selector(equalityFn = Object.is) {
         return {
           addListener: (listener, key?: ListenerKey) => {
             const cache = store.getState()
-            let currentState = selectorState(cache)
+            let value = selectorState(cache)
             if (firstCall) {
-              listener(currentState, {
-                prevValue: currentState,
-                prevState: cache,
-                state: cache,
-              })
+              listener(value, value, cache, cache)
             }
             return originListen((state, prevState) => {
               const nextState = selectorState(state)
-              if (!equalityFn(currentState, nextState)) {
-                currentState = nextState
-                listener(nextState, {
-                  prevValue: selectorState(prevState),
-                  prevState,
-                  state,
-                })
+              if (!equalityFn(value, nextState)) {
+                value = nextState
+                listener(nextState, selectorState(prevState), state, prevState)
               }
             }, key)
           },
