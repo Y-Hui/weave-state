@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
-
-import type { WeaveState } from '../create-store'
+import type { WeaveState } from 'weave-state'
 
 type WeaveStatePart<T> = Pick<WeaveState<T>, 'getState' | 'addListener'>
 type GetState<T> = T extends WeaveStatePart<infer U> ? U : unknown

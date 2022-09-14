@@ -10,5 +10,4 @@ export type {
   SetStateAction,
   SetStateFn,
 } from './types/index'
-export { default as setStateAction } from './utils/set-state-action'
-export { default as withUse } from './utils/with-use'
+export { setStateAction, withUse } from 'weave-state/utils'

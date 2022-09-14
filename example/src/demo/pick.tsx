@@ -1,8 +1,7 @@
 import type { FC } from 'react'
-
-import create from '../../../src'
-import { selector } from '../../../src/extend'
-import { useSelector } from '../../../src/react-extend'
+import create from 'weave-state'
+import { selector } from 'weave-state/extend'
+import { useSelector } from 'weave-state/react-extend'
 
 const nestedAtom = create({
   nested: {

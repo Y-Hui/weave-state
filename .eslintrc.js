@@ -55,7 +55,14 @@ module.exports = {
     'simple-import-sort/exports': 'error',
     'import/no-extraneous-dependencies': [
       'error',
-      { devDependencies: ['**/*.test.ts', '**/*.test.tsx', 'vite.config.ts'] },
+      {
+        devDependencies: [
+          '**/*.test.ts',
+          '**/*.test.tsx',
+          './rollup.config.js',
+          './scripts/*.js',
+        ],
+      },
     ],
     'react/require-default-props': 0,
     'no-redeclare': 0,

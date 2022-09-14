@@ -1,4 +1,4 @@
-import { InitialValue } from '../types'
+import { InitialValue } from '../types/index'
 
 function getInitialValue<S>(value: InitialValue<S>) {
   if (typeof value === 'function') {

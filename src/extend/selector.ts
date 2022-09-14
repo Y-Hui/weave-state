@@ -1,4 +1,5 @@
-import type { WeaveState } from '../create-store'
+import type { WeaveState } from 'weave-state'
+
 import { ListenerKey, RemoveListenerFn } from '../types/index'
 
 type WeaveStatePart<T> = Pick<

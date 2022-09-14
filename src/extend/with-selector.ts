@@ -1,4 +1,5 @@
-import type { WeaveState } from '../create-store'
+import type { WeaveState } from 'weave-state'
+
 import type { WithSelector } from './selector'
 import selector from './selector'
 

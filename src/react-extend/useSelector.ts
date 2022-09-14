@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-
-import type { GetState, WeaveState } from '../create-store'
-import type { WithSelector } from '../extend/selector'
+import type { GetState, WeaveState } from 'weave-state'
+import type { WithSelector } from 'weave-state/extend'
 
 type WeaveStatePart<T> = Pick<WithSelector<T>, 'selector'> &
   Pick<WeaveState<T>, 'getState'>

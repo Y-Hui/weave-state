@@ -1,10 +1,31 @@
 {
-  "extends": "../tsconfig.json",
   "compilerOptions": {
+    "target": "ESNext",
+    "useDefineForClassFields": true,
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "allowJs": false,
+    "skipLibCheck": true,
+    "esModuleInterop": false,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
+      "weave-state": ["../src/index.ts"],
+      "weave-state/extend": ["../src/extend/index.ts"],
+      "weave-state/react-extend": ["../src/react-extend/index.ts"],
+      "weave-state/utils": ["../src/utils/index.ts"],
+      "weave-state/utils/*": ["../src/utils/*.ts"],
+      "weave-state/types": ["../src/types"],
     }
   },
-  "include": ["src", "./src/vite-env.d.ts"],
+  "include": ["src", "./src/vite-env.d.ts", "../src"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

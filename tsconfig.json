@@ -2,7 +2,6 @@
   "compilerOptions": {
     "target": "ESNext",
     "useDefineForClassFields": true,
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "allowJs": false,
     "skipLibCheck": true,
     "esModuleInterop": false,
@@ -13,8 +12,20 @@
     "moduleResolution": "Node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "declarationDir": "./dist/temp-types",
     "jsx": "react-jsx",
     "baseUrl": ".",
+    "paths": {
+      "weave-state": ["./src/index.ts"],
+      "weave-state/extend": ["./src/extend/index.ts"],
+      "weave-state/react-extend": ["./src/react-extend/index.ts"],
+      "weave-state/utils": ["./src/utils/index.ts"],
+      "weave-state/utils/*": ["./src/utils/*.ts"],
+      "weave-state/types": ["./src/types"],
+    }
   },
+  "include": ["./src/**/*"],
+  "exclude": ["node_modules", "dist"]
 }

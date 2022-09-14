@@ -1,13 +1,17 @@
 import {
+  getInitialValue,
+  setStateAction,
+  Use,
+  withUse,
+} from 'weave-state/utils'
+
+import {
   InitialValue,
   Listener,
   ListenerKey,
   RemoveListenerFn,
   SetStateFn,
 } from './types/index'
-import getInitialValue from './utils/get-initial-value'
-import setStateAction from './utils/set-state-action'
-import withUse, { Use } from './utils/with-use'
 
 export interface WeaveState<S> {
   /**

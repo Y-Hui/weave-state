@@ -1,8 +1,7 @@
 import type { FC } from 'react'
-
-import create from '../../../src'
-import { computed } from '../../../src/extend'
-import { useValue, useWeaveState } from '../../../src/react-extend'
+import create from 'weave-state'
+import { computed } from 'weave-state/extend'
+import { useValue, useWeaveState } from 'weave-state/react-extend'
 
 const countAtom = create(0).use(useWeaveState)
 const doubleCountAtom = computed((read) => read(countAtom) * 2).use(useValue)

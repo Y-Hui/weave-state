@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
+import type { WeaveState } from 'weave-state'
 
-import type { WeaveState } from '../create-store'
-import type { SetStateFn } from '../types'
+import type { SetStateFn } from '../types/index'
 
 type WeaveStatePart<T> = Pick<
   WeaveState<T>,

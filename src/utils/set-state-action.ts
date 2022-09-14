@@ -1,4 +1,4 @@
-import { SetStateAction } from '../types'
+import { SetStateAction } from '../types/index'
 
 function setStateAction<S>(action: SetStateAction<S>, prevState: S): S {
   if (typeof action === 'function') {

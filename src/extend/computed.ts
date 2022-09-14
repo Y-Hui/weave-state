@@ -1,7 +1,7 @@
-import type { WeaveState } from '../create-store'
-import type { Listener, RemoveListenerFn, SetStateFn } from '../types'
-import setStateAction from '../utils/set-state-action'
-import withUse, { Use } from '../utils/with-use'
+import type { WeaveState } from 'weave-state'
+import { setStateAction, Use, withUse } from 'weave-state/utils'
+
+import type { Listener, RemoveListenerFn, SetStateFn } from '../types/index'
 import type { WithSelector } from './selector'
 import withSelector from './with-selector'
 

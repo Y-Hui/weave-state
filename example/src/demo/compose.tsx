@@ -1,8 +1,7 @@
 import type { FC } from 'react'
-
-import create from '../../../src'
-import { computed } from '../../../src/extend'
-import { useValue } from '../../../src/react-extend'
+import create from 'weave-state'
+import { computed } from 'weave-state/extend'
+import { useValue } from 'weave-state/react-extend'
 
 const nameAtom = create('Andrew').use(useValue)
 const ageAtom = create(11).use(useValue)
