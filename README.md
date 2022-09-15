@@ -8,6 +8,21 @@
 
 
 
+### 安装
+
+```bash
+# 使用 pnpm 进行安装
+pnpm add weave-state
+
+# 使用 yarn 进行安装
+yarn add weave-state
+
+# 使用 npm 进行安装
+npm i weave-state
+```
+
+
+
 ### 基本用法
 
 #### 基本类型值
@@ -134,7 +149,7 @@ value.setState((val) => val + 1)
 
 
 
-[computed 中的 read 是什么？](###computed 中的 read 是什么？)
+[computed 中的 read 是什么？](#computed-中的-read-是什么？)
 
 
 
@@ -320,7 +335,7 @@ selector 是一个函数，它有一个可选参数
 
 
 
-### 为 React 提供的函数
+### 在 React 中使用
 
 我们创建了一些 hook，方便在 React 中使用。
 
@@ -334,8 +349,10 @@ import { useWeaveState } from 'weave-state/react-extend'
 
 const store = create({ value: 0, age: 0 }).use(useWeaveState)
 
-// 以下代码需要写在 React Component 中
-const [state, setState] = state.useWeaveState()
+const Example () => {
+  const [state, setState] = state.useWeaveState()
+  return <></>
+}
 ```
 
 #### useSelector
@@ -349,9 +366,12 @@ import { useSelector } from 'weave-state/react-extend'
 
 const store = create({ value: 0, age: 0 }).use(selector()).use(useSelector)
 
-// 以下代码需要写在 React Component 中
-const value = state.useSelector(val => val.value)
-const doubleValue = state.useSelector(val => val.value * 2)
+const Example () => {
+  const value = state.useSelector(val => val.value)
+	const doubleValue = state.useSelector(val => val.value * 2)
+
+  return <></>
+}
 ```
 
 #### useValue
@@ -364,8 +384,10 @@ import { useValue } from 'weave-state/react-extend'
 
 const store = create({ value: 0, age: 0 }).use(useValue)
 
-// 以下代码需要写在 React Component 中
-const state = state.useValue()
+const Example () => {
+	const state = state.useValue()
+  return <></>
+}
 ```
 
 
@@ -414,9 +436,3 @@ computed((read) => {
 ```
 
 通过 read 函数手动标记依赖，也有利于后续为 computed 添加异步支持。
-
-
-
-### TODO
-
-- [ ] Build Script
