@@ -1,6 +1,6 @@
 {
   "name": "weave-state",
-  "version": "0.0.1-alpha.1",
+  "version": "0.1.0",
   "private": false,
   "author": "Y-Hui",
   "scripts": {
@@ -8,6 +8,7 @@
     "build:dts": "node ./scripts/type-declaration.js",
     "copy:base": "node ./scripts/package.js"
   },
+  "license": "MIT",
   "sideEffects": false,
   "types": "./types/index.d.ts",
   "exports": {
