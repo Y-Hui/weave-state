@@ -5,10 +5,11 @@ import {
   withUse,
 } from 'weave-state/utils'
 
-import {
+import type {
   InitialValue,
   Listener,
   ListenerKey,
+  Prettify,
   RemoveListenerFn,
   SetStateFn,
 } from './types/index'
@@ -56,7 +57,7 @@ export type GetState<T> = T extends WeaveState<infer U> ? U : unknown
 function createStore<S>(
   initialState: InitialValue<S>,
   equalityFn = Object.is,
-): Use<WeaveState<S>> {
+): Prettify<Use<WeaveState<S>>> {
   const initial = getInitialValue(initialState)
   const state = {
     entity: initial,

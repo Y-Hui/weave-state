@@ -320,8 +320,8 @@ import { selector } from 'weave-state/extend'
 const state = create({ name: 'Andrew', age: 14 }).use(selector())
 
 // 单独使用
-const withSelectot = selector()
-const state = withSelectot(create({ name: 'Andrew', age: 14 }))
+const withSelector = selector()
+const state = withSelector(create({ name: 'Andrew', age: 14 }))
 ```
 
 
@@ -343,14 +343,30 @@ selector 是一个函数，它有一个可选参数
 
 用于在 React 中读取状态并更新的 hook，它的使用方法和 React.useState 一致。
 
+##### 通过 use 挂载
+
 ```tsx
 import create from 'weave-state'
 import { useWeaveState } from 'weave-state/react-extend'
 
-const store = create({ value: 0, age: 0 }).use(useWeaveState)
+const store = create({ value: 0, age: 0 }).use(useWeaveState.install)
 
 const Example () => {
   const [state, setState] = state.useWeaveState()
+  return <></>
+}
+```
+
+##### 直接使用
+
+```tsx
+import create from 'weave-state'
+import { useWeaveState } from 'weave-state/react-extend'
+
+const store = create({ value: 0, age: 0 })
+
+const Example () => {
+  const [state, setState] = useWeaveState(state)
   return <></>
 }
 ```
@@ -376,17 +392,68 @@ const Example () => {
 
 #### useValue
 
-仅读取 state，而不需要 update 函数。
+仅读取 state，而不需要 update 函数。而且它还支持异步状态。
+
+##### 通过 use 挂载
 
 ```tsx
 import create from 'weave-state'
 import { useValue } from 'weave-state/react-extend'
 
-const store = create({ value: 0, age: 0 }).use(useValue)
+const store = create({ value: 0, age: 0 }).use(useValue.install)
 
 const Example () => {
 	const state = state.useValue()
   return <></>
+}
+```
+
+##### 直接使用
+
+```tsx
+import create from 'weave-state'
+import { useValue } from 'weave-state/react-extend'
+
+const store = create({ value: 0, age: 0 })
+
+const Example () => {
+	const state = useValue(state)
+  return <></>
+}
+```
+
+
+
+#### 异步 computed
+
+computed 派生状态支持返回一个 Promise。你可以直接使用 useValue 来获取数据，不过需要注意：必须在外层使用 Suspense 组件。
+
+```tsx
+import create from 'weave-state'
+import { computed } from 'weave-state/extend'
+import { useValue } from 'weave-state/react-extend'
+
+const count = create(1)
+
+const asyncAtom = computed((read) => {
+  return new Promise<number>((resolve) => {
+    setTimeout(() => {
+      resolve(read(count) * 10)
+    }, 1000)
+  })
+})
+
+function Demo() {
+  const value = useValue(asyncAtom)
+  return <div>{value}</div>
+}
+
+function App() {
+  return (
+    <Suspense fallback={<div>loading..</div>}>
+      <Demo />
+    </Suspense>
+  )
 }
 ```
 
@@ -435,4 +502,4 @@ computed((read) => {
 })
 ```
 
-通过 read 函数手动标记依赖，也有利于后续为 computed 添加异步支持。
+通过 read 函数手动标记依赖，即使是异步回调也能正常运行。

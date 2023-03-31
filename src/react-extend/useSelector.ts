@@ -8,7 +8,7 @@ type WeaveStatePart<T> = Pick<WithSelector<T>, 'selector'> &
 /**
  * 添加 useSelector Hook，它依赖于 selector。
  *
- * 是用 hook 的方式 “侦听” state 中的某个值。
+ * 使用 hook 的方式 “侦听” state 中的某个值。
  *
  * ```ts
  * import create from 'weave-state'

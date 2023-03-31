@@ -3,12 +3,14 @@ import create from 'weave-state'
 import { computed } from 'weave-state/extend'
 import { useValue, useWeaveState } from 'weave-state/react-extend'
 
-const countAtom = create(0).use(useWeaveState)
-const doubleCountAtom = computed((read) => read(countAtom) * 2).use(useValue)
+const countAtom = create(0)
+const doubleCountAtom = computed((read) => read(countAtom) * 2).use(
+  useValue.install,
+)
 
 const Basic: FC = () => {
-  const [count, setCount] = countAtom.useWeaveState()
-  const doubleCount = doubleCountAtom.useValue()
+  const [count, setCount] = useWeaveState(countAtom)
+  const doubleCount = useValue(doubleCountAtom)
 
   return (
     <div>

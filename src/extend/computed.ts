@@ -1,7 +1,12 @@
 import type { WeaveState } from 'weave-state'
 import { setStateAction, Use, withUse } from 'weave-state/utils'
 
-import type { Listener, RemoveListenerFn, SetStateFn } from '../types/index'
+import type {
+  Listener,
+  Prettify,
+  RemoveListenerFn,
+  SetStateFn,
+} from '../types/index'
 import type { WithSelector } from './selector'
 import withSelector from './with-selector'
 
@@ -34,11 +39,12 @@ export type ComputedValue<R> = {
 
 export type ComputedWritableValue<R> = ComputedValue<R> & {
   setState: SetStateFn<R>
-  // setState(nextState: R): void
 }
 
-function computed<R>(action: ReadonlyValue<R>): Use<ComputedValue<R>>
-function computed<R>(action: WritableValue<R>): Use<ComputedWritableValue<R>>
+function computed<R>(action: ReadonlyValue<R>): Prettify<Use<ComputedValue<R>>>
+function computed<R>(
+  action: WritableValue<R>,
+): Prettify<Use<ComputedWritableValue<R>>>
 function computed<R>(action: ReadonlyValue<R> | WritableValue<R>) {
   const listeners = new Set<Listener<R>>()
   const deps = new Set<WeaveStatePart<unknown>>()

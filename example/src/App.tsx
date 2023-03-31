@@ -1,3 +1,4 @@
+import Async from './demo/async-computed'
 import Basic from './demo/basic'
 import Compose from './demo/compose'
 import Computed from './demo/computed'
@@ -17,6 +18,8 @@ function App() {
       <Pick />
       <h2>WritableComputed</h2>
       <WritableComputed />
+      <h2>Async</h2>
+      <Async />
     </div>
   )
 }

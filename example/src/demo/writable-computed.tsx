@@ -3,7 +3,7 @@ import create from 'weave-state'
 import { computed } from 'weave-state/extend'
 import { useValue, useWeaveState } from 'weave-state/react-extend'
 
-const personAtom = create({ helen: { age: 1 } }).use(useValue)
+const personAtom = create({ helen: { age: 1 } }).use(useValue.install)
 const helenAge = computed({
   get(read) {
     return read(personAtom, (atom) => atom.helen.age)
@@ -14,11 +14,9 @@ const helenAge = computed({
     })
   },
 })
-  .use(useValue)
-  .use(useWeaveState)
 
 const Basic: FC = () => {
-  const [age, setAge] = helenAge.useWeaveState()
+  const [age, setAge] = useWeaveState(helenAge)
   const person = personAtom.useValue()
   return (
     <div>

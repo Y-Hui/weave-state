@@ -3,15 +3,15 @@ import create from 'weave-state'
 import { computed } from 'weave-state/extend'
 import { useValue } from 'weave-state/react-extend'
 
-const nameAtom = create('Andrew').use(useValue)
-const ageAtom = create(11).use(useValue)
+const nameAtom = create('Andrew')
+const ageAtom = create(11)
 
 const composeAtom = computed((read) => {
   return `${read(nameAtom)} is ${read(ageAtom)} years old.`
-}).use(useValue)
+})
 
 const Basic: FC = () => {
-  const info = composeAtom.useValue()
+  const info = useValue(composeAtom)
 
   return (
     <div>

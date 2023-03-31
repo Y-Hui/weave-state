@@ -16,26 +16,30 @@ type StateHook<T> = [T, SetStateFn<T>]
  *
  * ```ts
  * import create from 'weave-state'
- * import { stateHook } from 'weave-state/extend'
+ * import { useWeaveState } from 'weave-state/extend'
  *
- * const state = create({ value: 0, age: 0 }).use(stateHook)
+ * const state = create({ value: 0, age: 0 }).use(useWeaveState.install)
  *
  * // use in React Component
  * const [value, setValue] = state.useWeaveState()
+ * // OR
+ * useWeaveState(state)
  * ```
  */
-function stateHook<T extends WeaveStatePart<any>>(store: T) {
+function useWeaveState<T extends WeaveStatePart<any>>(store: T) {
   type State = GetState<T>
+
+  const [value, setValue] = useState<State>(store.getState)
+  useEffect(() => store.addListener(setValue), [store])
+
+  return [value, store.setState] as StateHook<State>
+}
+
+useWeaveState.install = <T extends WeaveStatePart<any>>(store: T) => {
   return {
     ...store,
-    useWeaveState(): StateHook<State> {
-      const [value, setValue] = useState<GetState<T>>(store.getState)
-
-      useEffect(() => store.addListener(setValue), [])
-
-      return [value, store.setState]
-    },
+    useWeaveState: () => useWeaveState(store),
   } as const
 }
 
-export default stateHook
+export default useWeaveState

@@ -2,7 +2,7 @@ import type { FC } from 'react'
 import create from 'weave-state'
 import { useWeaveState } from 'weave-state/react-extend'
 
-const countAtom = create(0).use(useWeaveState)
+const countAtom = create(0)
 
 const Updater: FC = () => {
   return (
@@ -25,7 +25,7 @@ const Updater: FC = () => {
 }
 
 const Basic: FC = () => {
-  const [count, setCount] = countAtom.useWeaveState()
+  const [count, setCount] = useWeaveState(countAtom)
   return (
     <div>
       <p>{count}</p>
