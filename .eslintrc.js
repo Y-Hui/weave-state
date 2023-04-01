@@ -65,5 +65,6 @@ module.exports = {
     'react/require-default-props': 0,
     'no-redeclare': 0,
     '@typescript-eslint/no-redeclare': 'warn',
+    'react/jsx-one-expression-per-line': 0,
   },
 }

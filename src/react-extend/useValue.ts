@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { useEffect, useState } from 'react'
+import { useSyncExternalStore } from 'use-sync-external-store'
 import type { WeaveState } from 'weave-state'
 
 type WeaveStatePart<T> = Pick<WeaveState<T>, 'getState' | 'addListener'>
@@ -50,9 +50,7 @@ function use<T>(promise: PromiseTask<T>): T {
  */
 function useValue<T extends WeaveStatePart<any>>(store: T) {
   type State = GetState<T>
-  const [value, setValue] = useState(store.getState)
-
-  useEffect(() => store.addListener(setValue), [store])
+  const value = useSyncExternalStore(store.addListener, store.getState)
 
   if (value instanceof Promise) {
     return use(value) as Awaited<State>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useSyncExternalStore } from 'use-sync-external-store'
 import type { WeaveState } from 'weave-state'
 
 import type { SetStateFn } from '../types/index'
@@ -29,9 +29,7 @@ type StateHook<T> = [T, SetStateFn<T>]
 function useWeaveState<T extends WeaveStatePart<any>>(store: T) {
   type State = GetState<T>
 
-  const [value, setValue] = useState<State>(store.getState)
-  useEffect(() => store.addListener(setValue), [store])
-
+  const value = useSyncExternalStore<State>(store.addListener, store.getState)
   return [value, store.setState] as StateHook<State>
 }
 
