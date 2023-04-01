@@ -79,8 +79,7 @@ function createStore<S>(
    * 通知所有 listener
    */
   const notify = () => {
-    const dispatch = (listener: Listener<S>) =>
-      listener(getState(), state.prevEntity)
+    const dispatch = (listener: Listener<S>) => listener(getState(), state.prevEntity)
     // 优先调用命名的监听器
     namedListeners.forEach(dispatch)
     listeners.forEach(dispatch)

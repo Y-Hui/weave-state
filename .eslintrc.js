@@ -8,8 +8,6 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
     'airbnb',
     'airbnb/hooks',
-    'plugin:prettier/recommended',
-    'prettier',
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -19,9 +17,9 @@ module.exports = {
     ecmaVersion: 12,
     sourceType: 'module',
   },
-  plugins: ['@typescript-eslint', 'simple-import-sort', 'prettier'],
+  plugins: ['@typescript-eslint', 'simple-import-sort'],
   rules: {
-    'prettier/prettier': 'error',
+    semi: ['error', 'never'],
     'arrow-body-style': 0,
     'prefer-arrow-callback': 0,
     'react/react-in-jsx-scope': 0,

@@ -42,9 +42,7 @@ export type ComputedWritableValue<R> = ComputedValue<R> & {
 }
 
 function computed<R>(action: ReadonlyValue<R>): Prettify<Use<ComputedValue<R>>>
-function computed<R>(
-  action: WritableValue<R>,
-): Prettify<Use<ComputedWritableValue<R>>>
+function computed<R>(action: WritableValue<R>): Prettify<Use<ComputedWritableValue<R>>>
 function computed<R>(action: ReadonlyValue<R> | WritableValue<R>) {
   const listeners = new Set<Listener<R>>()
   const deps = new Set<WeaveStatePart<unknown>>()
