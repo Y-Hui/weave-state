@@ -11,6 +11,7 @@ module.exports = {
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
+    project: './tsconfig.json',
     ecmaFeatures: {
       jsx: true,
     },
@@ -66,5 +67,7 @@ module.exports = {
     'no-redeclare': 0,
     '@typescript-eslint/no-redeclare': 'warn',
     'react/jsx-one-expression-per-line': 0,
+    '@typescript-eslint/consistent-type-imports': 'error',
+    '@typescript-eslint/consistent-type-exports': 'error'
   },
 }

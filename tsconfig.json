@@ -26,6 +26,6 @@
       "weave-state/types": ["./src/types"],
     }
   },
-  "include": ["./src/**/*"],
+  "include": ["./src/**/*", ".eslintrc.js", "./example/src/**/*"],
   "exclude": ["node_modules", "dist"]
 }

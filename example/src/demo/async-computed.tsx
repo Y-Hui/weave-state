@@ -1,4 +1,5 @@
-import { FC, Suspense } from 'react'
+import type { FC } from 'react'
+import { Suspense } from 'react'
 import create from 'weave-state'
 import { computed } from 'weave-state/extend'
 import { useValue } from 'weave-state/react-extend'
