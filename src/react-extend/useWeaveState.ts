@@ -1,4 +1,4 @@
-import { useSyncExternalStore } from 'use-sync-external-store'
+import { useSyncExternalStore } from 'use-sync-external-store/shim'
 import type { WeaveState } from 'weave-state'
 
 import type { SetStateFn } from '../types/index'
